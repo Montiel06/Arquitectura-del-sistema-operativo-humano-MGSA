@@ -17,3 +17,4 @@ Buscamos al arquitecto que operará este sistema. Si estás aquí para el reto, 
 
 ---
 "Certeza Operacional por diseño." — **Vanessa Montiel, CEO.**
+[Acepta el Desafío VEO aquí](./arquitectura/métricas/desafíos/VEO_CHALLENGE.md).
