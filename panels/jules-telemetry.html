@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jules Telemetría</title>
+  <style>
+    :root{--bg:#051020;--panel:#071426;--accent:#00e6ff;--muted:#87a6b8}
+    body{margin:0;font-family:Inter,Segoe UI,Helvetica,Arial;color:#dff4ff;background:var(--bg);display:flex;min-height:100vh}
+    .container{max-width:1200px;margin:32px auto;padding:24px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.6);position:relative;overflow:hidden}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    h1{font-size:20px;color:var(--accent);margin:0}
+    .meta{color:var(--muted);font-size:13px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .card{background:var(--panel);padding:14px;border-radius:8px;border:1px solid rgba(0,230,255,0.06)}
+    .metric{font-size:28px;color:#fff;margin-top:8px}
+    canvas{width:100%!important;height:260px!important}
+    .overlay{position:absolute;right:18px;top:18px;width:420px;opacity:0.18;pointer-events:none}
+    footer{margin-top:14px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Jules — Panel de Telemetría</h1>
+        <div class="meta">Última actualización: <span id="last">—</span></div>
+      </div>
+      <div class="meta">Estado: <strong id="status">Conectando...</strong></div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">Frecuencia cardiaca</div>
+        <div class="metric" id="hr">— BPM</div>
+        <div class="meta">Rango esperado: 60–140</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Temperatura</div>
+        <div class="metric" id="temp">— °C</div>
+        <div class="meta">Estado térmico</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Batería</div>
+        <div class="metric" id="bat">— %</div>
+        <div class="meta">Nivel restante estimado</div>
+      </div>
+
+      <div class="card" style="grid-column:1 / -1">
+        <canvas id="chart"></canvas>
+      </div>
+    </div>
+
+    <footer>Datos simulados — sustituir la fuente con la API real de Jules.</footer>
+
+    <img class="overlay" src="../assets/cyber-overlay.svg" alt="overlay"/>
+  </div>
+
+  <!-- Dependencia: Chart.js CDN, cambiar si se integra en bundler -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Simulador sencillo de telemetría para previa
+    const hrEl = document.getElementById('hr');
+    const tempEl = document.getElementById('temp');
+    const batEl = document.getElementById('bat');
+    const statusEl = document.getElementById('status');
+    const lastEl = document.getElementById('last');
+
+    let dataPoints = [];
+
+    function randomBetween(min,max){return Math.round(min + Math.random()*(max-min))}
+
+    function pushSample(){
+      const now = new Date();
+      const sample = {
+        t: now.toISOString(),
+        hr: randomBetween(60,130),
+        temp: (35 + Math.random()*3).toFixed(1),
+        bat: Math.max(12, Math.round(100 - (dataPoints.length*0.2) % 100))
+      };
+      dataPoints.push(sample);
+      if(dataPoints.length>40) dataPoints.shift();
+      updateUI(sample);
+      chart.data.labels = dataPoints.map(s => new Date(s.t).toLocaleTimeString());
+      chart.data.datasets[0].data = dataPoints.map(s => s.hr);
+      chart.update();
+    }
+
+    function updateUI(s){
+      hrEl.textContent = s.hr + ' BPM';
+      tempEl.textContent = s.temp + ' °C';
+      batEl.textContent = s.bat + ' %';
+      statusEl.textContent = 'Activo';
+      lastEl.textContent = new Date(s.t).toLocaleTimeString();
+    }
+
+    // Chart.js inicial
+    const ctx = document.getElementById('chart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type:'line',
+      data:{labels:[],datasets:[{label:'Frecuencia cardiaca (BPM)',data:[],borderColor:'#ff4da6',backgroundColor:'rgba(255,77,166,0.12)',tension:0.3,pointRadius:0}]},
+      options:{scales:{y:{min:40,max:180}},plugins:{legend:{display:true}}}
+    });
+
+    // Start simulated stream
+    for(let i=0;i<12;i++) pushSample();
+    setInterval(pushSample, 2500);
+  </script>
+</body>
+</html>
