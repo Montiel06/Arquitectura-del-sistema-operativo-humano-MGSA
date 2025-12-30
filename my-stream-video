@@ -1,1 +1,12 @@
-
+/* Inyección de Identidad Visual MGSA */
+.main-dashboard::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">...</svg>');
+  background-size: cover;
+  pointer-events: none;
+  z-index: 100;
+  animation: pulse-glow 4s infinite alternate;
+}
