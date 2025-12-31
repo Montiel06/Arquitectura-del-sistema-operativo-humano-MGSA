@@ -1,3 +1,4 @@
+https://drive.google.com/file/d/1_uJbvgnYgwA4VITcXTrMTqcetycYd8F8/view?usp=drivesdk 
 # Arquitectura-del-sistema-operativo-humano-MGSA
 # 🛡️ MGSA Human OS: Architecture & Security
 > **The Blueprint for Enterprise Operational Certainty.**
